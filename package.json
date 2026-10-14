@@ -1,0 +1,54 @@
+{
+  "name": "rx1-dj",
+  "version": "0.1.0",
+  "description": "App de DJ independente controlado pela DDJ-400 (interface original, inspirada em layout de player standalone)",
+  "main": "dist/main.js",
+  "private": true,
+  "scripts": {
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:renderer": "esbuild src/renderer/main.ts --bundle --outfile=dist/renderer/renderer.js --sourcemap --target=chrome120",
+    "build": "npm run build:main && npm run build:renderer && npm run build:assets",
+    "start": "npm run build && electron .",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.main.json --noEmit",
+    "dist:win": "npm run build && electron-builder --win --x64",
+    "build:assets": "node -e \"require('fs').mkdirSync('dist/renderer',{recursive:true});for(const f of ['index.html','styles.css'])require('fs').copyFileSync('src/renderer/'+f,'dist/renderer/'+f)\""
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "electron": "^44.4.5",
+    "electron-builder": "^26.15.3",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2"
+  },
+  "productName": "RX1 DJ",
+  "build": {
+    "appId": "com.mita.rx1dj",
+    "productName": "RX1 DJ",
+    "files": [
+      "dist/**/*",
+      "mappings/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "mappings",
+        "to": "mappings"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}

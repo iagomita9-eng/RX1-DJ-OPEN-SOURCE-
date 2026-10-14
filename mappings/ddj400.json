@@ -1,0 +1,211 @@
+{
+  "version": 1,
+  "device": "DDJ-400",
+  "controls": {
+    "deck1.play": {
+      "kind": "note",
+      "channel": 1,
+      "number": 11
+    },
+    "deck1.cue": {
+      "kind": "note",
+      "channel": 1,
+      "number": 12
+    },
+    "deck1.sync": {
+      "kind": "note",
+      "channel": 1,
+      "number": 88
+    },
+    "deck1.load": {
+      "kind": "note",
+      "channel": 7,
+      "number": 70
+    },
+    "deck1.tempo": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 0
+    },
+    "deck1.jog.turn": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 33
+    },
+    "deck1.jog.touch": {
+      "kind": "note",
+      "channel": 1,
+      "number": 54
+    },
+    "deck2.play": {
+      "kind": "note",
+      "channel": 2,
+      "number": 11
+    },
+    "deck2.cue": {
+      "kind": "note",
+      "channel": 2,
+      "number": 12
+    },
+    "deck2.sync": {
+      "kind": "note",
+      "channel": 2,
+      "number": 88
+    },
+    "deck2.tempo": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 0
+    },
+    "deck2.jog.turn": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 33
+    },
+    "deck2.jog.touch": {
+      "kind": "note",
+      "channel": 2,
+      "number": 54
+    },
+    "mixer.ch1.volume": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 19
+    },
+    "mixer.ch1.trim": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 4
+    },
+    "mixer.ch1.eq.low": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 15
+    },
+    "mixer.ch1.eq.mid": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 11
+    },
+    "mixer.ch1.eq.hi": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 7
+    },
+    "mixer.ch2.filter": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 24
+    },
+    "mixer.crossfader": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 31
+    },
+    "mixer.ch2.volume": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 19
+    },
+    "mixer.ch2.eq.low": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 15
+    },
+    "mixer.ch2.eq.mid": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 11
+    },
+    "mixer.ch2.eq.hi": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 7
+    },
+    "mixer.ch1.cue": {
+      "kind": "note",
+      "channel": 1,
+      "number": 84
+    },
+    "mixer.ch2.cue": {
+      "kind": "note",
+      "channel": 2,
+      "number": 84
+    },
+    "mixer.fone.volume": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 13
+    },
+    "mixer.fone.selector": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 12
+    },
+    "mixer.master.volume": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 8
+    },
+    "mixer.master.cue": {
+      "kind": "note",
+      "channel": 7,
+      "number": 99
+    },
+    "mixer.ch2.trim": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 4
+    },
+    "deck1.shift": {
+      "kind": "note",
+      "channel": 1,
+      "number": 63
+    },
+    "deck2.shift": {
+      "kind": "note",
+      "channel": 2,
+      "number": 63
+    },
+    "mixer.ch1.filter": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 23
+    },
+    "deck2.load": {
+      "kind": "note",
+      "channel": 7,
+      "number": 71
+    },
+    "browse.turn": {
+      "kind": "cc",
+      "channel": 7,
+      "number": 64
+    },
+    "browse.push": {
+      "kind": "note",
+      "channel": 7,
+      "number": 65
+    },
+    "out.ch1.level": {
+      "kind": "cc",
+      "channel": 1,
+      "number": 2
+    },
+    "out.ch2.level": {
+      "kind": "cc",
+      "channel": 2,
+      "number": 2
+    },
+    "deck1.sync.shift": {
+      "kind": "note",
+      "channel": 1,
+      "number": 96
+    },
+    "deck2.sync.shift": {
+      "kind": "note",
+      "channel": 2,
+      "number": 96
+    }
+  }
+}

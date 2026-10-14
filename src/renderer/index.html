@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; script-src 'self'">
+  <title>RX1 DJ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>RX1 DJ</h1>
+    <label>Entrada <select id="inputSelect"></select></label>
+    <nav><button data-view="decksView" class="active">DECKS</button><button data-view="monitorView">MONITOR</button></nav>
+    <span id="status" class="dim">iniciando…</span>
+  </header>
+
+  <main id="monitorView" class="view">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Mensagens em tempo real</h2>
+        <button id="pauseBtn">Pausar</button>
+        <button id="clearBtn">Limpar</button>
+      </div>
+      <div class="cols dim"><span>hora</span><span>tipo</span><span>canal</span><span>número</span><span>valor</span><span>bytes</span><span></span></div>
+      <div id="log"></div>
+    </section>
+
+    <aside class="panel">
+      <h2>Mapa de controles</h2>
+      <p class="dim">Digite um nome, clique em Aprender e mexa no controle da DDJ-400. O primeiro sinal recebido vira o código do controle.</p>
+      <div class="learn">
+        <input id="nameInput" list="names" placeholder="ex.: deck1.play" autocomplete="off">
+        <datalist id="names"></datalist>
+        <button id="learnBtn">Aprender</button>
+      </div>
+      <div id="learnMsg" class="dim"></div>
+      <div id="mapList"></div>
+      <h2>Áudio (pré-escuta)</h2>
+      <div id="audioInfo" class="dim"></div>
+      <div id="cueDiag" class="dim probe-diag"></div>
+      <div class="probe"><button id="toneMaster">Tom no master</button><button id="tonePhones">Tom no fone</button></div>
+      <p class="dim">Tocar o master também em outras saídas de áudio ao mesmo tempo (ex.: caixa de retorno, fone do PC), sem tirar o som da DDJ-400. Pode ligar mais de uma.</p>
+      <div class="probe"><button id="refreshOut">Atualizar lista</button></div>
+      <div id="outList"></div>
+      <h2>Saída MIDI (LEDs)</h2>
+      <p class="dim">Para acender LEDs da DDJ-400 (ex.: nível dos canais). Olhe a controladora enquanto envia.</p>
+      <div class="probe">
+        <select id="pKind"><option value="cc">CC</option><option value="note">Note</option></select>
+        <input id="pCh" type="number" min="1" max="16" value="1" title="canal"><input id="pNum" type="number" min="0" max="127" value="0" title="número"><input id="pVal" type="number" min="0" max="127" value="127" title="valor">
+      </div>
+      <div class="probe"><button id="pPrev">◀</button><button id="pSend">Enviar</button><button id="pOff">Apagar</button><button id="pNext">▶</button><button id="pSweep">Varrer números</button></div>
+      <div class="learn"><input id="pName" list="outnames" placeholder="ex.: out.ch1.level" autocomplete="off"><datalist id="outnames"><option value="out.ch1.level"><option value="out.ch2.level"></datalist><button id="pSave">Salvar código</button></div>
+      <div id="pMsg" class="dim"></div>
+      <h2>Dispositivos</h2>
+      <div id="devices" class="dim"></div>
+    </aside>
+  </main>
+  <div id="decksView" class="view active"></div>
+  <script src="./renderer.js"></script>
+</body>
+</html>

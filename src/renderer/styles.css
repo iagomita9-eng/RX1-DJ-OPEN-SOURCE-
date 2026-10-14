@@ -1,0 +1,86 @@
+:root { --bg:#0b0b0b; --panel:#141414; --line:#2a2a2a; --amber:#ff9d1a; --text:#e6e6e6; --dim:#8a8a8a; }
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--text); font: 13px/1.4 "Segoe UI", sans-serif; display: flex; flex-direction: column; }
+header { display: flex; align-items: center; gap: 16px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+h1 { margin: 0; font-size: 14px; letter-spacing: .15em; color: var(--amber); }
+h2 { margin: 0 0 8px; font-size: 12px; letter-spacing: .1em; color: var(--amber); text-transform: uppercase; }
+.dim { color: var(--dim); }
+select, input, button { background: #1d1d1d; color: var(--text); border: 1px solid var(--line); border-radius: 3px; padding: 5px 8px; font: inherit; }
+button { cursor: pointer; } button:hover { border-color: var(--amber); }
+button.active { background: var(--amber); color: #000; }
+main { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 360px; gap: 12px; padding: 12px; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px; display: flex; flex-direction: column; min-height: 0; overflow: auto; }
+.panel-head { display: flex; align-items: center; gap: 8px; } .panel-head h2 { flex: 1; margin: 0; }
+.cols, .row { display: grid; grid-template-columns: 70px 70px 50px 60px 60px 1fr 40px; gap: 6px; padding: 2px 4px; font-family: Consolas, monospace; }
+#log { flex: 1; overflow-y: auto; }
+.row { border-bottom: 1px solid #1c1c1c; }
+.row.flash { background: #2a1c05; }
+.row .cnt { color: var(--amber); }
+.learn { display: flex; gap: 6px; margin-bottom: 6px; } .learn input { flex: 1; }
+#learnMsg { min-height: 18px; margin-bottom: 8px; }
+.mapitem { display: flex; justify-content: space-between; gap: 6px; padding: 3px 0; border-bottom: 1px solid #1c1c1c; font-family: Consolas, monospace; }
+.mapitem button { padding: 0 6px; }
+#devices { margin-top: 4px; white-space: pre-wrap; }
+
+.view { display: none; } .view.active { display: grid; } #decksView.active { display: flex; }
+main.view.active { display: grid; }
+nav { display: flex; gap: 4px; } nav button.active { background: var(--amber); color: #000; }
+#decksView { flex: 1; min-height: 0; flex-direction: column; gap: 6px; padding: 8px; background: #000; }
+.rxbar { display: flex; gap: 6px; } .rxbar button { flex: 1; background: #111; color: #999; border-color: #222; letter-spacing: .08em; }
+.rxbar button.cursor { border-color: var(--amber); color: var(--amber); box-shadow: 0 0 0 1px var(--amber) inset; }
+.stage { flex: 1; min-height: 0; container-type: size; display: flex; align-items: center; justify-content: center; }
+/* Tela com proporção fixa (como o display do player); tudo dentro escala em "em". */
+.screen { --w: min(100cqw, calc(100cqh * 1.6667)); width: 100%; height: 100%; font-size: calc(var(--w) * .0145);
+  position: relative; display: flex; flex-direction: column; gap: .3em; background: #000; border: 1px solid #222; overflow: hidden; }
+.topline { display: flex; justify-content: space-between; align-items: center; padding: .15em .4em 0; font-size: .7em; height: 1.7em; }
+.tag { padding: .1em .7em; background: #1a1a1a; color: #666; border: 1px solid #2a2a2a; } .tag.quant { font: inherit; cursor: pointer; background: #1a1a1a; color: #666; border-color: #2a2a2a; }
+.tag.quant.active { background: #3a0f0f; color: #ff6b6b; border-color: #a52a2a; }
+.cdjtoggle { font: inherit; cursor: pointer; } .cdjtoggle.active { background: var(--amber); color: #000; border-color: var(--amber); }
+.zoom { color: #bbb; letter-spacing: .12em; } .zoom small { color: var(--amber); }
+.main { flex: 1.55; display: flex; gap: .3em; min-height: 0; padding: 0 .3em; }
+.lanes { flex: 1; display: flex; flex-direction: column; gap: .3em; min-width: 0; }
+.lane { position: relative; flex: 1; display: flex; min-height: 0; border: 1px solid #222; }
+.lane-info { width: 13%; display: flex; flex-direction: column; gap: .25em; padding: .25em; background: #0c0c0c; font-size: .62em; color: #ddd; }
+.lane-tag { background: #1b4f99; color: #fff; font-weight: 700; padding: .1em .5em; } .lane.d2 .lane-tag, .dpanel.d2 .ptitle { background: #a35f00; }
+.lane canvas { flex: 1; min-width: 0; height: 100%; display: block; }
+.fxpanel { width: 17%; display: flex; flex-direction: column; gap: .2em; border: 1px solid #222; font-size: .6em; color: #666; padding-bottom: .4em; }
+.fxhead { background: #1b4f99; color: #fff; padding: .15em .5em; opacity: .55; } .fxname { text-align: center; color: #888; font-size: 1.5em; padding: .3em 0; }
+.fxpanel small, .fxpanel b { padding: 0 .6em; } .fxbpm { margin-top: auto; padding: 0 .6em; } .fxbpm b { font-size: 1.6em; padding: 0; } .fxbpm small { padding-left: .4em; }
+.panels { flex: 1.05; display: grid; grid-template-columns: 1fr 1fr; gap: .3em; min-height: 0; padding: 0 .3em .3em; }
+.dpanel { display: flex; flex-direction: column; min-height: 0; background: #0a0a0a; border: 1px solid #222; }
+.ptitle { display: flex; align-items: center; gap: .5em; padding: .1em .5em; background: #1b4f99; font-weight: 700; font-size: .85em; }
+.ptitle .title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .ptitle button { padding: 0 .6em; font-size: .7em; }
+.pinfo { display: flex; align-items: center; gap: 1.3em; padding: .3em .6em; font-family: Consolas, monospace; }
+.pinfo small { display: block; font-size: .55em; color: var(--dim); white-space: nowrap; }
+.pblk b { font-size: 1.3em; color: var(--amber); } .pblk .pt { color: #888; }
+.ptime .pos { font-size: 2.2em; line-height: 1; } .ptime small .rem { color: #bbb; }
+.tempo { font-size: 1.1em; }
+.bpmbox { border: 1px solid var(--amber); padding: .1em .6em; text-align: center; } .bpmbox .bpm { font-size: 1.3em; color: var(--amber); }
+.state { margin-left: auto; color: var(--amber); font-size: 1.3em; }
+.dpanel .overview { flex: 1; min-height: 0; width: 100%; display: block; border-top: 1px solid #222; }
+.toast { position: absolute; top: 9%; left: 50%; transform: translateX(-50%); z-index: 9; background: #1b1b1b; border: 1px solid var(--amber); padding: .3em 1em; font-size: .85em; }
+.toast[hidden], .browser[hidden] { display: none; }
+.browser { position: absolute; inset: 0; z-index: 5; background: rgba(0,0,0,.96); display: flex; flex-direction: column; }
+.bhead { background: #1b4f99; padding: .3em .8em; font-weight: 700; font-size: .9em; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.blist { flex: 1; overflow-y: auto; } .brow { padding: .25em .9em; font-size: .9em; border-bottom: 1px solid #141414; cursor: pointer; }
+.brow.sel { background: var(--amber); color: #000; } .bfoot { padding: .25em .8em; font-size: .6em; color: var(--dim); border-top: 1px solid #222; }
+.probe { display: flex; gap: 4px; margin-bottom: 6px; } .probe input { width: 56px; } .probe button, .probe select { flex: 1; }
+.screen.aspect { width: var(--w); height: calc(var(--w) * .6); }
+.gtools { display: flex; gap: 2px; } .gtools button { padding: 0 .35em; font-size: .62em; line-height: 1.5; }
+.flags { display: flex; flex-direction: column; gap: .15em; font-size: .55em; color: #555; letter-spacing: .08em; } .flags .on { color: #000; background: var(--amber); padding: 0 .4em; }
+.bpmbox.warn { border-color: #e05252; } .bpmbox.warn .bpm { color: #e05252; }
+.phase { color: #ddd; margin-left: .8em; font-size: .9em; letter-spacing: 0; }
+.probe-diag { font-family: Consolas, monospace; font-size: .68em; margin: 4px 0 8px; line-height: 1.5; }
+.lane-info { position: relative; }
+.needle { position: absolute; right: .3em; top: .3em; width: 2.2em; height: 2.2em; border: 2px solid var(--amber); border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; z-index: 2; }
+.needle .nbeat { font-size: 1.1em; font-weight: 700; color: var(--amber); line-height: 1; }
+.needle small { font-size: .45em; color: #888; letter-spacing: .1em; }
+
+/* Modo claro: troca só as cores de fundo/texto da casca do app; a tela dos decks continua escura (é a "tela" do player). */
+body.light { --bg: #eee; --panel: #fff; --line: #ccc; --text: #111; --dim: #555; }
+body.light select, body.light input, body.light button { background: #fff; color: #111; border-color: #ccc; }
+body.light .row, body.light .mapitem { border-color: #ddd; }
+.needle .nbeat.pulse { animation: needlepulse .25s ease-out; }
+@keyframes needlepulse { 0% { transform: scale(1.6); color: #fff; } 100% { transform: scale(1); color: var(--amber); } }
