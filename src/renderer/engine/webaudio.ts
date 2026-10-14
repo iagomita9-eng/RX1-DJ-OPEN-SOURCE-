@@ -9,7 +9,7 @@ export class WebAudioDeck implements DeckEngine {
   private buffer: AudioBuffer | null = null;
   private src: AudioBufferSourceNode | null = null;
   private rate = 1;
-  private pos = 0;        // posição (s) no instante t0 — ou parada, quando não há src
+  private pos = 0;        // posição (s) no instante t0 - ou parada, quando não há src
   private t0 = 0;         // ctx.currentTime em que 'pos' foi válida
   private cuePoint = 0;
   private cueSet = false;
@@ -37,10 +37,10 @@ export class WebAudioDeck implements DeckEngine {
   cue(quantizeGrid?: Grid | null, leadSec = 0) {
     if (!this.buffer) return;
     if (this.src) { this.stopSource(); this.pos = this.cuePoint; }       // tocando: volta ao cue e para
-    else if (Math.abs(this.pos - this.cuePoint) < 0.02) { this.previewing = true; void this.ctx.resume(); this.startAt(this.cuePoint); } // no cue: prévia enquanto segura — toca o ponto EXATO marcado, não a posição crua do jog (que pode estar a até 20ms de distância)
+    else if (Math.abs(this.pos - this.cuePoint) < 0.02) { this.previewing = true; void this.ctx.resume(); this.startAt(this.cuePoint); } // no cue: prévia enquanto segura - toca o ponto EXATO marcado, não a posição crua do jog (que pode estar a até 20ms de distância)
     else { // parado em outro ponto: define o cue
       // QUANTIZE ligado: trava na batida mais próxima da grade. QUANTIZE desligado: marca exatamente
-      // onde o DJ parou, sem nenhum ajuste automático — marcação 100% manual, no lugar que ele escolher.
+      // onde o DJ parou, sem nenhum ajuste automático - marcação 100% manual, no lugar que ele escolher.
       const raw = quantizeGrid
         ? quantizeGrid.first + Math.round((this.pos - quantizeGrid.first) / quantizeGrid.period) * quantizeGrid.period // QUANTIZE ligado: trava na grade
         : (this.buffer ? refineCue(this.buffer, this.pos) : this.pos); // QUANTIZE desligado: trava no início real do golpe mais próximo
@@ -93,14 +93,9 @@ export class WebAudioDeck implements DeckEngine {
     try { s.stop(); } catch { /* já parou */ }
   }
 
-  // "Stutter cue": com o deck pausado, repete um trecho curto (stutterFrame) que começa na posição atual.
-  //
-  // O trecho NÃO é repetido com loopStart/loopEnd direto no áudio da faixa: isso emenda o fim do trecho
-  // com o começo sem suavização, e a emenda vira um ESTALO (medido: até 0,77 de salto numa faixa cujo
-  // kick tem pico 0,90). Esse estalo cai exatamente no início do loop — a linha branca — ou seja, ANTES
-  // do kick, e é o "tique" que se ouve antes do golpe de verdade. Aqui o trecho é copiado para um buffer
-  // próprio, com fade curto na entrada (1 ms, preserva o ataque do kick) e na saída (2 ms), e esse buffer
-  // é que fica em loop: a emenda une silêncio com silêncio e o único transiente audível é o do próprio áudio.
+  // "Stutter cue": com o deck pausado, repete um trecho curto que começa no primeiro ataque
+  // significativo encontrado na posição atual. Isso evita reproduzir o silêncio/pré-ringing que vem
+  // imediatamente antes do kick e faz a audição coincidir com o transiente mostrado na linha.
   private stutterSrc: AudioBufferSourceNode | null = null;
   private stutterGain: GainNode | null = null;
   private stutterT = -1; // início (s) do trecho que o loop atual está tocando
@@ -128,24 +123,28 @@ export class WebAudioDeck implements DeckEngine {
     s.start(0);
     this.stutterSrc = s; this.stutterGain = g; this.stutterT = t;
   }
-  // Monta o buffer do loop: dura stutterFrame (é o PERÍODO da repetição), mas só os primeiros stutterBurst
-  // segundos têm áudio (copiado de t, com fade-in de 1 ms e fade-out de 2 ms); o resto é silêncio.
-  // Assim a repetição continua lenta e legível (período ~150 ms), mas o trecho AUDÍVEL fica colado na linha:
-  // um kick só aparece no som quando está a no máximo stutterBurst ms à frente da linha. stutterBurst = 0
-  // volta ao comportamento antigo (o loop inteiro tem áudio).
+  // Monta o buffer do loop: dura stutterFrame (o período da repetição), mas apenas stutterBurst
+  // segundos têm áudio. O ataque recebe uma rampa curtíssima, só para evitar clique digital;
+  // não há mais fade-in de 1 ms apagando a primeira borda do kick.
   private renderStutter(t: number): AudioBuffer | null {
     const b = this.buffer; if (!b) return null;
     const sr = b.sampleRate, n = Math.max(2, Math.round(this.stutterFrame * sr)), start = Math.round(t * sr);
     const burstN = this.stutterBurst > 0 ? Math.min(n, Math.max(2, Math.round(this.stutterBurst * sr))) : n;
     const out = this.ctx.createBuffer(b.numberOfChannels, n, sr);
-    const fi = Math.min(burstN >> 1, Math.max(1, Math.round(0.001 * sr))), fo = Math.min(burstN >> 1, Math.max(1, Math.round(0.002 * sr)));
+    const fi = Math.min(burstN >> 1, Math.max(1, Math.round(0.00025 * sr)));
+    const fo = Math.min(burstN >> 1, Math.max(1, Math.round(0.002 * sr)));
     for (let c = 0; c < b.numberOfChannels; c++) {
       const src = b.getChannelData(c), dst = out.getChannelData(c);
+      const initial = src[start] ?? 0;
       for (let i = 0; i < burstN; i++) {
         let v = src[start + i] ?? 0;
-        if (i < fi) v *= i / fi; else if (i >= burstN - fo) v *= (burstN - 1 - i) / fo;
+        if (i < fi) v *= (i + 1) / fi;
+        else if (i >= burstN - fo) v *= Math.max(0, (burstN - 1 - i) / fo);
         dst[i] = v;
       }
+      // Se o corte começa longe de zero, force o primeiro sample a zero para impedir um clique.
+      // O segundo sample já entra na rampa curta, preservando o impacto do transiente.
+      if (Math.abs(initial) > 0.02) dst[0] = 0;
     }
     return out;
   }
@@ -155,10 +154,56 @@ export class WebAudioDeck implements DeckEngine {
     try { g.gain.cancelScheduledValues(now); g.gain.setValueAtTime(g.gain.value, now); g.gain.linearRampToValueAtTime(0, now + 0.004); s.stop(now + 0.006); }
     catch { try { s.stop(); } catch { /* já parou */ } }
   }
-  // Toca a partir da posição crua do jog (this.pos) — a MESMA que a tela desenha. stutterDelay é um
-  // ajuste opcional (settings.stutterDelayMs, padrão 0) só no áudio do stutter.
+  // Procura o primeiro ataque significativo logo à frente do jog. A energia é calculada em mono com
+  // envelope RMS curto; o limiar se adapta ao pico da janela, evitando confundir ruído/pré-ringing com kick.
+  private findStutterTransient(from: number) {
+    const b = this.buffer; if (!b) return from;
+    const sr = b.sampleRate;
+    const start = Math.max(0, Math.min(Math.round(from * sr), b.length - 1));
+    const searchN = Math.min(b.length - start, Math.max(1, Math.round(0.035 * sr)));
+    if (searchN < 4) return start / sr;
+
+    const channels = Array.from({ length: b.numberOfChannels }, (_, c) => b.getChannelData(c));
+    const hop = Math.max(1, Math.round(0.0005 * sr));
+    const win = Math.max(hop, Math.round(0.0015 * sr));
+    const env: number[] = [];
+    let peak = 0;
+    for (let i = 0; i < searchN; i += hop) {
+      let sum = 0, count = 0;
+      const end = Math.min(searchN, i + win);
+      for (let j = i; j < end; j++) {
+        let mono = 0;
+        for (const ch of channels) mono += ch[start + j] ?? 0;
+        mono /= channels.length;
+        sum += mono * mono; count++;
+      }
+      const rms = Math.sqrt(sum / Math.max(1, count));
+      env.push(rms); peak = Math.max(peak, rms);
+    }
+    if (peak < 0.006) return start / sr;
+
+    const floorCount = Math.max(1, Math.min(env.length, Math.ceil(0.006 / (hop / sr))));
+    let floor = 0;
+    for (let i = 0; i < floorCount; i++) floor += env[i];
+    floor /= floorCount;
+    const threshold = Math.max(0.008, floor * 3, peak * 0.18);
+
+    for (let i = 1; i < env.length; i++) {
+      const rising = env[i] >= env[i - 1] * 1.12 || env[i] - env[i - 1] > peak * 0.025;
+      if (env[i] >= threshold && rising) {
+        // Recuo pequeno pega o começo da subida, sem voltar ao pré-ringing anterior ao golpe.
+        const onset = Math.max(0, i * hop - Math.round(0.00075 * sr));
+        return (start + onset) / sr;
+      }
+    }
+    return start / sr;
+  }
+  // stutterDelay continua disponível como calibração; depois dele, o início é refinado para o primeiro
+  // transiente nos próximos 35 ms. O período do loop permanece inalterado.
   private stutterWindow() {
-    return Math.max(0, Math.min(this.pos + this.stutterDelay, Math.max(0, this.getDuration() - this.stutterFrame)));
+    const raw = Math.max(0, Math.min(this.pos + this.stutterDelay, Math.max(0, this.getDuration() - this.stutterFrame)));
+    const onset = this.findStutterTransient(raw);
+    return Math.max(0, Math.min(onset, Math.max(0, this.getDuration() - this.stutterFrame)));
   }
   private stopStutter() {
     if (!this.stutterSrc) return;
